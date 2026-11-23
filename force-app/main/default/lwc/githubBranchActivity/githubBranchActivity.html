@@ -1,0 +1,74 @@
+<template>
+    <lightning-card title="GitHub Branch Activity" icon-name="utility:activity">
+        <lightning-button-icon
+            slot="actions"
+            icon-name="utility:refresh"
+            alternative-text="Refresh GitHub activity"
+            title="Refresh GitHub activity"
+            disabled={isLoading}
+            onclick={handleRefresh}
+        ></lightning-button-icon>
+
+        <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+            <lightning-layout multiple-rows>
+                <lightning-layout-item size="12" medium-device-size="6" padding="horizontal-small">
+                    <lightning-combobox
+                        label="Repository"
+                        placeholder="Select a repository"
+                        options={repositoryOptions}
+                        value={repository}
+                        disabled={repositoryDisabled}
+                        onchange={handleRepositoryChange}
+                    ></lightning-combobox>
+                </lightning-layout-item>
+                <lightning-layout-item size="12" medium-device-size="6" padding="horizontal-small">
+                    <lightning-combobox
+                        label="Branch"
+                        placeholder="Select a branch"
+                        options={branchOptions}
+                        value={branch}
+                        disabled={branchDisabled}
+                        onchange={handleBranchChange}
+                    ></lightning-combobox>
+                </lightning-layout-item>
+            </lightning-layout>
+
+            <template lwc:if={selectorError}>
+                <p class="slds-text-color_error slds-m-top_medium" role="alert">{selectorError}</p>
+            </template>
+
+            <template lwc:if={isLoading}>
+                <div class="spinner-container slds-is-relative slds-m-top_medium">
+                    <lightning-spinner alternative-text="Loading GitHub data" size="small"></lightning-spinner>
+                </div>
+            </template>
+
+            <template lwc:if={showActivity}>
+                <p class="slds-text-body_small slds-m-vertical_medium">
+                    Shows up to 30 recent commits and 30 recently updated pull requests targeting this branch.
+                    The Merges tab shows merge commits and merged pull requests from these results.
+                </p>
+                <lightning-tabset>
+                    <template for:each={tabs} for:item="tab">
+                        <lightning-tab key={tab.value} value={tab.value} label={tab.label}>
+                            <template lwc:if={tab.error}>
+                                <p class="slds-text-color_error slds-m-bottom_small" role="alert">{tab.error}</p>
+                            </template>
+                            <template lwc:if={tab.hasRows}>
+                                <lightning-datatable
+                                    key-field="id"
+                                    data={tab.rows}
+                                    columns={columns}
+                                    hide-checkbox-column
+                                ></lightning-datatable>
+                            </template>
+                            <template lwc:if={tab.showEmpty}>
+                                <p class="slds-p-vertical_small">{tab.empty}</p>
+                            </template>
+                        </lightning-tab>
+                    </template>
+                </lightning-tabset>
+            </template>
+        </div>
+    </lightning-card>
+</template>

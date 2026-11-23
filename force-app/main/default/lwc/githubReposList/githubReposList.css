@@ -1,0 +1,22 @@
+/* ── Initial load spinner — min-height so the card doesn't collapse ─────── */
+.spinner-container {
+    min-height: 8rem;
+}
+
+/* ── Refresh overlay — semi-transparent cover over the existing table ─────── */
+/* inset + z-index + background-color have no SLDS utility class equivalents  */
+/* position:absolute is applied via slds-is-absolute on the element itself    */
+.refresh-overlay {
+    inset: 0;
+    z-index: 10;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 0.25rem;
+}
+
+/* ── Fixed-height scrollable datatable container ─────────────────────────── */
+/* height + overflow have no SLDS utility class equivalents                   */
+.table-container {
+    height: 480px;
+    overflow-y: auto;
+    overflow-x: auto;
+}
