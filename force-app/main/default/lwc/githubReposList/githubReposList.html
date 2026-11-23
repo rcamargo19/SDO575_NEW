@@ -1,0 +1,93 @@
+<template>
+    <lightning-card title="GitHub Repositories" icon-name="utility:github">
+        <div slot="actions">
+            <lightning-button-icon
+                icon-name="utility:refresh"
+                alternative-text="Refresh repositories"
+                title="Refresh"
+                variant="bare"
+                onclick={handleRefresh}
+                disabled={isLoading}
+            ></lightning-button-icon>
+        </div>
+
+        <div class="slds-card__body slds-card__body_inner">
+
+            <!-- Loading state before any rows are available -->
+            <template lwc:if={showLoadingSpinner}>
+                <div class="spinner-container slds-is-relative">
+                    <lightning-spinner
+                        alternative-text="Loading GitHub repositories"
+                        size="medium"
+                    ></lightning-spinner>
+                </div>
+            </template>
+
+            <!-- Error state -->
+            <template lwc:if={hasError}>
+                <div
+                    class="slds-notify slds-notify_alert slds-theme_alert-texture slds-m-bottom_small"
+                    role="alert"
+                    aria-live="assertive"
+                >
+                    <span class="slds-assistive-text">Error</span>
+                    <lightning-icon
+                        icon-name="utility:error"
+                        alternative-text="Error"
+                        size="x-small"
+                        class="slds-m-right_x-small"
+                        variant="inverse"
+                    ></lightning-icon>
+                    {errorMessage}
+                </div>
+            </template>
+
+            <!-- Data table (shown when not on initial load) -->
+            <template lwc:if={showTable}>
+                <div class="table-wrapper slds-is-relative">
+                    <!-- Refresh overlay spinner -->
+                    <template lwc:if={isLoading}>
+                        <div class="refresh-overlay slds-is-absolute slds-grid slds-grid_align-center slds-grid_vertical-align-center" aria-label="Refreshing repositories">
+                            <lightning-spinner
+                                alternative-text="Refreshing"
+                                size="small"
+                            ></lightning-spinner>
+                        </div>
+                    </template>
+
+                    <div class="table-container">
+                        <lightning-datatable
+                            key-field="id"
+                            data={repos}
+                            columns={columns}
+                            hide-checkbox-column
+                            sorted-by={sortedBy}
+                            sorted-direction={sortedDirection}
+                            onsort={handleSort}
+                        ></lightning-datatable>
+                    </div>
+                </div>
+
+                <p class="slds-text-body_small slds-text-color_weak slds-m-top_x-small slds-p-horizontal_small">
+                    {repoCountLabel}
+                </p>
+            </template>
+
+            <!-- Empty state -->
+            <template lwc:if={showEmptyState}>
+                <div class="slds-illustration slds-illustration_small slds-p-vertical_large slds-text-align_center">
+                    <lightning-icon
+                        icon-name="utility:github"
+                        size="large"
+                        class="slds-m-bottom_small"
+                    ></lightning-icon>
+                    <p class="slds-text-heading_medium">No repositories found</p>
+                    <p class="slds-text-body_regular slds-text-color_weak">
+                        No GitHub repositories were returned for this account.
+                    </p>
+                </div>
+            </template>
+
+        </div>
+    </lightning-card>
+</template>
